@@ -23,7 +23,7 @@
             --border: rgba(148, 163, 184, 0.18);
             --shadow: 0 20px 60px rgba(2, 8, 23, 0.45);
             --container: 1120px;
-            --nav-height: 76px;
+            --nav-height: 88px;
             --radius-lg: 24px;
             --radius-md: 16px;
             --radius-sm: 12px;
@@ -107,9 +107,9 @@
         }
 
         .brand-mark {
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
             display: grid;
             place-items: center;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.12), rgba(124, 58, 237, 0.12));
@@ -1506,7 +1506,13 @@
 
         @media (max-width: 480px) {
             :root {
-                --nav-height: 72px;
+                --nav-height: 80px;
+            }
+
+            .brand-mark {
+                width: 64px;
+                height: 64px;
+                border-radius: 18px;
             }
 
             .container {
