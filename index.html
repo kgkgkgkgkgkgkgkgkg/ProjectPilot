@@ -1109,7 +1109,7 @@
 
         .telegram-demo {
             display: grid;
-            grid-template-rows: auto minmax(360px, 1fr) auto;
+            grid-template-rows: auto 1fr;
             min-height: 640px;
             border-radius: calc(var(--radius-lg) - 6px);
             background: #17212b;
@@ -1762,7 +1762,7 @@
                 <div class="section-header">
                     <h2>Product Showcase</h2>
                     <p>
-                        See ProjectPilot in action. Click below to watch the bot perform a dynamic proposal audit.
+                        See ProjectPilot in action. Watch the bot dynamically review and audit a proposal draft.
                     </p>
                 </div>
                 <div class="demo-shell">
@@ -1782,7 +1782,7 @@
                         <div class="telegram-demo__messages" id="telegramMessages" aria-live="polite">
                             <div class="telegram-message telegram-message--system">
                                 <div class="telegram-message__bubble">
-                                    Welcome to the ProjectPilot Showcase. Click the option below to see how it works!
+                                    Welcome to the ProjectPilot Showcase. Watch how the bot reviews an uploaded purchase proposal draft:
                                 </div>
                             </div>
                             <div class="telegram-message telegram-message--bot" id="telegramTyping" hidden>
@@ -1798,9 +1798,8 @@
                             </div>
                         </div>
 
-                        <div class="telegram-demo__composer">
-                            <button class="btn-showcase" data-scenario="proposal">Proposal Review</button>
-                        </div>
+                        <!-- Composer removed for pure showcase presentation -->
+                    </div>
                     </div>
                 </div>
             </div>
@@ -2000,7 +1999,7 @@
 
         const scenarios = {
             proposal: {
-                prompt: "Review my purchase proposal draft for the used car.",
+                prompt: "",
                 file: {
                     name: "car_purchase_proposal.pdf",
                     size: "142 KB"
