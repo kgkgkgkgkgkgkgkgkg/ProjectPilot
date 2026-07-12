@@ -1521,6 +1521,57 @@
                 bottom: 0.9rem;
             }
         }
+
+        .telegram-message__file {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            min-width: 220px;
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ff4a4a;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(255, 74, 74, 0.3);
+        }
+
+        .file-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 700;
+            font-size: 0.88rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-size {
+            font-size: 0.76rem;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .file-caption {
+            font-size: 0.92rem;
+            line-height: 1.4;
+            color: #eff6fb;
+        }
     </style>
 </head>
 
@@ -1711,7 +1762,7 @@
                 <div class="section-header">
                     <h2>Product Showcase</h2>
                     <p>
-                        See ProjectPilot in action. Select a project scenario below to watch the bot dynamically organize the team's workload.
+                        See ProjectPilot in action. Click below to watch the bot perform a dynamic proposal audit.
                     </p>
                 </div>
                 <div class="demo-shell">
@@ -1731,7 +1782,7 @@
                         <div class="telegram-demo__messages" id="telegramMessages" aria-live="polite">
                             <div class="telegram-message telegram-message--system">
                                 <div class="telegram-message__bubble">
-                                    Welcome to the ProjectPilot Showcase. Click one of the options below to see how it works!
+                                    Welcome to the ProjectPilot Showcase. Click the option below to see how it works!
                                 </div>
                             </div>
                             <div class="telegram-message telegram-message--bot" id="telegramTyping" hidden>
@@ -1748,9 +1799,6 @@
                         </div>
 
                         <div class="telegram-demo__composer">
-                            <button class="btn-showcase" data-scenario="app">React App</button>
-                            <button class="btn-showcase" data-scenario="marketing">Marketing Campaign</button>
-                            <button class="btn-showcase" data-scenario="design">Design Sprint</button>
                             <button class="btn-showcase" data-scenario="proposal">Proposal Review</button>
                         </div>
                     </div>
@@ -1951,53 +1999,12 @@
         }
 
         const scenarios = {
-            app: {
-                prompt: "Organize launch of a React web app with developer Alice, marketer Bob, and designer Charlie.",
-                response: [
-                    "🎯 **Goal:** Launch a React web app\n",
-                    "📋 **Smart Task Breakdown & Assignment:**\n",
-                    "🎨 **Charlie (Designer)**",
-                    "  [ ] Create Figma layout mockups",
-                    "  [ ] Export SVGs and logo files\n",
-                    "🛠️ **Alice (Developer)**",
-                    "  [ ] Create React repository & structure",
-                    "  [ ] Code responsive homepage & navbar\n",
-                    "⚙️ **Bob (Marketer)**",
-                    "  [ ] Setup landing page Analytics & SEO",
-                    "  [ ] Setup launch campaign announcement\n",
-                    "🚀 **Next step:** Run `/start_sprint` inside Telegram to log all tasks!"
-                ].join('\n')
-            },
-            marketing: {
-                prompt: "Plan a Summer Sale campaign with copywriter Dave and designer Charlie.",
-                response: [
-                    "🎯 **Goal:** Summer Sale campaign\n",
-                    "📋 **Smart Task Breakdown & Assignment:**\n",
-                    "🎨 **Charlie (Designer)**",
-                    "  [ ] Create email template graphics",
-                    "  [ ] Build promo banner templates\n",
-                    "✍️ **Dave (Copywriter)**",
-                    "  [ ] Write email subject lines & body copy",
-                    "  [ ] Draft social media ad copy\n",
-                    "🚀 **Next step:** Run `/start_sprint` inside Telegram to log all tasks!"
-                ].join('\n')
-            },
-            design: {
-                prompt: "Run a brand design sprint with designer Charlie and developer Alice.",
-                response: [
-                    "🎯 **Goal:** Brand design sprint\n",
-                    "📋 **Smart Task Breakdown & Assignment:**\n",
-                    "🎨 **Charlie (Designer)**",
-                    "  [ ] Audit current color palette",
-                    "  [ ] Propose 3 design options for logo\n",
-                    "🛠️ **Alice (Developer)**",
-                    "  [ ] Prepare asset folder & styling guide",
-                    "  [ ] Setup typography package links\n",
-                    "🚀 **Next step:** Run `/start_sprint` inside Telegram to log all tasks!"
-                ].join('\n')
-            },
             proposal: {
                 prompt: "Review my purchase proposal draft for the used car.",
+                file: {
+                    name: "car_purchase_proposal.pdf",
+                    size: "142 KB"
+                },
                 response: [
                     "🤖 *Proposal Review Complete!* This draft is high-level but lacks critical technical depth for a robust purchase decision.\n",
                     "**Missing Technical Requirements:**",
@@ -2040,7 +2047,43 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'telegram-message__bubble';
-            bubble.innerHTML = parseTelegramMarkdown(text);
+
+            if (options.file) {
+                const docWrapper = document.createElement('div');
+                docWrapper.className = 'telegram-message__file';
+
+                const icon = document.createElement('div');
+                icon.className = 'file-icon';
+                icon.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+
+                const meta = document.createElement('div');
+                meta.className = 'file-meta';
+                
+                const name = document.createElement('div');
+                name.className = 'file-name';
+                name.textContent = options.file.name;
+
+                const size = document.createElement('div');
+                size.className = 'file-size';
+                size.textContent = options.file.size;
+
+                meta.appendChild(name);
+                meta.appendChild(size);
+
+                docWrapper.appendChild(icon);
+                docWrapper.appendChild(meta);
+
+                bubble.appendChild(docWrapper);
+                
+                if (text) {
+                    const caption = document.createElement('div');
+                    caption.className = 'file-caption';
+                    caption.textContent = text;
+                    bubble.appendChild(caption);
+                }
+            } else {
+                bubble.innerHTML = parseTelegramMarkdown(text);
+            }
 
             if (options.timestamp) {
                 const meta = document.createElement('span');
@@ -2068,7 +2111,12 @@
             const scenario = scenarios[name];
             if (!scenario) return;
 
-            appendTelegramMessage('user', scenario.prompt, { timestamp: Date.now() });
+            const msgOptions = { timestamp: Date.now() };
+            if (scenario.file) {
+                msgOptions.file = scenario.file;
+            }
+
+            appendTelegramMessage('user', scenario.prompt, msgOptions);
 
             const buttons = document.querySelectorAll('.btn-showcase');
             buttons.forEach(btn => {
@@ -2122,7 +2170,7 @@
         window.addEventListener('scroll', handleScrollProgress, { passive: true });
         window.addEventListener('resize', updateScrollProgress);
 
-        runShowcaseScenario('app');
+        runShowcaseScenario('proposal');
         setActiveNav('hero');
         updateScrollProgress();
     </script>
