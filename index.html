@@ -1751,6 +1751,7 @@
                             <button class="btn-showcase" data-scenario="app">React App</button>
                             <button class="btn-showcase" data-scenario="marketing">Marketing Campaign</button>
                             <button class="btn-showcase" data-scenario="design">Design Sprint</button>
+                            <button class="btn-showcase" data-scenario="proposal">Proposal Review</button>
                         </div>
                     </div>
                 </div>
@@ -1953,49 +1954,78 @@
             app: {
                 prompt: "Organize launch of a React web app with developer Alice, marketer Bob, and designer Charlie.",
                 response: [
-                    "🎯 Goal: Launch a React web app\n",
-                    "📋 Smart Task Breakdown & Assignment:\n",
-                    "🎨 Charlie (Designer)",
+                    "🎯 **Goal:** Launch a React web app\n",
+                    "📋 **Smart Task Breakdown & Assignment:**\n",
+                    "🎨 **Charlie (Designer)**",
                     "  [ ] Create Figma layout mockups",
                     "  [ ] Export SVGs and logo files\n",
-                    "🛠️ Alice (Developer)",
+                    "🛠️ **Alice (Developer)**",
                     "  [ ] Create React repository & structure",
                     "  [ ] Code responsive homepage & navbar\n",
-                    "⚙️ Bob (Marketer)",
+                    "⚙️ **Bob (Marketer)**",
                     "  [ ] Setup landing page Analytics & SEO",
                     "  [ ] Setup launch campaign announcement\n",
-                    "🚀 Next step: Run /start_sprint inside Telegram to log all tasks!"
+                    "🚀 **Next step:** Run `/start_sprint` inside Telegram to log all tasks!"
                 ].join('\n')
             },
             marketing: {
                 prompt: "Plan a Summer Sale campaign with copywriter Dave and designer Charlie.",
                 response: [
-                    "🎯 Goal: Summer Sale campaign\n",
-                    "📋 Smart Task Breakdown & Assignment:\n",
-                    "🎨 Charlie (Designer)",
+                    "🎯 **Goal:** Summer Sale campaign\n",
+                    "📋 **Smart Task Breakdown & Assignment:**\n",
+                    "🎨 **Charlie (Designer)**",
                     "  [ ] Create email template graphics",
                     "  [ ] Build promo banner templates\n",
-                    "✍️ Dave (Copywriter)",
+                    "✍️ **Dave (Copywriter)**",
                     "  [ ] Write email subject lines & body copy",
                     "  [ ] Draft social media ad copy\n",
-                    "🚀 Next step: Run /start_sprint inside Telegram to log all tasks!"
+                    "🚀 **Next step:** Run `/start_sprint` inside Telegram to log all tasks!"
                 ].join('\n')
             },
             design: {
                 prompt: "Run a brand design sprint with designer Charlie and developer Alice.",
                 response: [
-                    "🎯 Goal: Brand design sprint\n",
-                    "📋 Smart Task Breakdown & Assignment:\n",
-                    "🎨 Charlie (Designer)",
+                    "🎯 **Goal:** Brand design sprint\n",
+                    "📋 **Smart Task Breakdown & Assignment:**\n",
+                    "🎨 **Charlie (Designer)**",
                     "  [ ] Audit current color palette",
                     "  [ ] Propose 3 design options for logo\n",
-                    "🛠️ Alice (Developer)",
+                    "🛠️ **Alice (Developer)**",
                     "  [ ] Prepare asset folder & styling guide",
                     "  [ ] Setup typography package links\n",
-                    "🚀 Next step: Run /start_sprint inside Telegram to log all tasks!"
+                    "🚀 **Next step:** Run `/start_sprint` inside Telegram to log all tasks!"
+                ].join('\n')
+            },
+            proposal: {
+                prompt: "Review my purchase proposal draft for the used car.",
+                response: [
+                    "🤖 *Proposal Review Complete!* This draft is high-level but lacks critical technical depth for a robust purchase decision.\n",
+                    "**Missing Technical Requirements:**",
+                    "Comprehensive diagnostics (OBD-II scan, fluid analysis, battery health), underbody inspection for rust/leaks, detailed brake & tire assessment (rotors, tire dates), steering system diagnosis (squeak cause), full electrical systems check, and verifiable service history (e.g., CarFax/AutoCheck).\n",
+                    "**Structural Flow Evaluation:**",
+                    "The flow is logical (Overview -> Mechanical -> Financial -> Next Steps) but extremely superficial. It reports observations without analysis, objective data, or a proper risk assessment before jumping to a conclusion. A dedicated \"Risk Analysis & Mitigation\" section is absent.\n",
+                    "**3 Areas for Improvement:**",
+                    "1. **Integrate Objective Data:** Require a professional pre-purchase inspection (PPI) including OBD-II scan, fluid tests, and underbody examination. This moves beyond subjective observation.",
+                    "2. **Develop Risk & Cost Analysis:** Quantify potential repair/maintenance costs (brakes, tires, steering squeak) and assess their impact on the overall budget and vehicle's true value.",
+                    "3. **Refine Decision Framework:** Establish clear go/no-go criteria based on comprehensive inspection findings and a revised financial model that accounts for identified repair costs. The current 'Next Steps' is unsubstantiated."
                 ].join('\n')
             }
         };
+
+        function parseTelegramMarkdown(text) {
+            let escaped = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+            escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            escaped = escaped.replace(/`(.*?)`/g, '<code>$1</code>');
+
+            return escaped;
+        }
 
         function appendTelegramMessage(role, text, options = {}) {
             const messageRow = document.createElement('div');
@@ -2010,7 +2040,7 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'telegram-message__bubble';
-            bubble.textContent = text;
+            bubble.innerHTML = parseTelegramMarkdown(text);
 
             if (options.timestamp) {
                 const meta = document.createElement('span');
